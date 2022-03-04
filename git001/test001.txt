@@ -1,0 +1,13 @@
+■ git
+
+	1. https://github.com/
+	2. 저장소
+	3. 비번 인증키 > 인증서 붙여넣기
+	 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
+	4. 이클립스 연동 - 프로젝트 만들기
+	5. [window] - [show View] - [other] - [git] - Git Repositories
+	6. [Git Repositories]  clone a git repository
+	7. 프로젝트 선택 후 - 오른쪽 마우스 - team - share project / 저장소 선택 
+	8. [team] - [commit] commit message 적고
+	9. commit 버튼 누르기
+	10.
