@@ -1,0 +1,476 @@
+■ STEP001
+- 학과와 학생은 1 : 다 관계
+	학과는 많은 학생을 가질 수 있다.
+	학생은 한 학과의 소속된다.
+- 학과와 교수는 1 : 다 관계
+	학과는 많은 교수를 가질 수 있다.
+	교수는 한 학과의 소속된다.
+- 교수와 개설과목은 1 : 다 관계
+	교수는 많은 과목을 가르칠 수 있다.
+	과목은 강의하는 교수 한 명이 지정된다.
+- 과목과 학생은 다 : 다 관계
+	과목은 수강하는 많은 학생을 가진다.
+	학생은 많은 과목을 수강할 수 있다.
+
+■ STEP002
+관계형 데이터베이스는 다:다 관계를 허용하지 않는다. 과목과 학생의 다:다 관계를 해소하기 위해서 조인테이블 역할을 수행할 수강 엔티티를 추가한다.
+
+- 과목과 수강은 1 : 다 관계
+- 학생과 수강은 1 : 다 관계
+
+
+■ STEP003
+
+학생(Student)
+	학번(student_id), 성명(student_name), 키(height), 학과코드(department_id)
+-------------------------------------------------------------
+학과(Department)
+	학과코드(department_id), 학과명(department_name)
+----------------------------------------------------------------
+교수(Professor)
+	교수코드(professor_id), 교수명(professor_name), 학과코드(department_id)
+---------------------------------------------------------------------
+개설과목(Course)
+	과목코드(course_id), 과목명(course_name), 교수코드(professor_id), 
+	시작일(start_date), 종료일(end_date)
+-----------------------------------------------------------
+수강(Student_Course)
+	학번(student_id), 과목코드(course_id)
+
+-------------------------------------------------------
+외부참조 키(FK) : 해당 엔티티와 관련된 데이터를 갖고 있는 프로퍼티가 아닌 다른 엔티티와의 관계를 설정하기 위한 키
+
+
+■ STEP004
+개설과목 테이블
+CREATE TABLE Course(
+	course_id INT    NOT NULL auto_increment  PRIMARY KEY,
+	course_name VARCHAR   (100),
+	start_date DATE,
+	end_date DATE,
+	professor_id INT    NOT NULL) default charset=utf8;
+__________________________________________________________________
+	 
+학과 테이블
+CREATE TABLE Department(
+	department_id INT    NOT NULL auto_increment  PRIMARY KEY,
+	department_name VARCHAR   (100))default charset=utf8;
+	 
+______________________________________________________________________
+
+교수 테이블
+CREATE TABLE Professor(
+	professor_id INT    NOT NULL auto_increment  PRIMARY KEY,
+	professor_name VARCHAR   (100),
+	department_id INT    NOT NULL) default charset=utf8;
+	 
+____________________________________________________________________
+
+학생 테이블
+CREATE TABLE Student(
+	student_id INT    NOT NULL auto_increment  PRIMARY KEY,
+	student_name VARCHAR   (100),
+	height int , 
+	department_id INT    NOT NULL) default charset=utf8;
+	 
+_________________________________________________________________
+
+수강 테이블
+CREATE TABLE Student_Course(
+	student_id INT    NOT NULL,
+	course_id INT    NOT NULL) default charset=utf8;
+
+__________________________________________________________________
+
+외래키 추가
+
+ALTER TABLE Course ADD  
+	FOREIGN KEY(professor_id)  REFERENCES Professor(professor_id);
+--------------------------------------------------------------------
+ALTER TABLE Professor ADD  
+	FOREIGN KEY(department_id)  REFERENCES Department(department_id);
+---------------------------------------------------------------------------
+ALTER TABLE Student_Course ADD  
+	FOREIGN KEY(course_id) REFERENCES Course(course_id);
+----------------------------------------------------------------------------
+ALTER TABLE Student ADD 
+	FOREIGN KEY(department_id)  REFERENCES Department(department_id);
+----------------------------------------------------------------------------
+ALTER TABLE Student_Course ADD  
+	FOREIGN KEY(student_id)  REFERENCES Student(student_id);
+
+_________________________________________________________________________
+
+■ STEP005 INSERT
+-- 학과
+insert into department values(1, '수학');
+insert into department values(2, '국문학');
+insert into department values(3, '정보통신공학');
+insert into department values(4, '모바일공학');
+
+-- 학생
+insert into student values(1, '가길동', 177, 1);
+insert into student values(2, '나길동', 178, 1);
+insert into student values(3, '다길동', 179, 1);
+insert into student values(4, '라길동', 180, 2);
+insert into student values(5, '마길동', 170, 2);
+insert into student values(6, '바길동', 172, 3);
+insert into student values(7, '사길동', 166, 4);
+insert into student values(8, '아길동', 192, 4);
+
+-- 교수
+insert into professor values(1, '가교수' ,1);
+insert into professor values(2, '나교수' ,2);
+insert into professor values(3, '다교수' ,3);
+insert into professor values(4, '빌게이츠' ,4);
+insert into professor values(5, '스티브잡스' ,3);
+
+-- 개설과목
+insert into course values(1, '교양영어', '2016/9/2', '2016/11/30', 1);
+insert into course values(2, '데이터베이스 입문', '2016/8/20','2016/10/30', 3);
+insert into course values(3, '회로이론', '2016/10/20', '2016/12/30', 2);
+insert into course values(4, '공업수학', '2016/11/2', '2017/1/28', 4);
+insert into course values(5, '객체지향프로그래밍', '2016/11/1', '2017/1/30', 3);
+
+-- 수강
+insert into student_course values(1, 1);
+insert into student_course values(2, 1);
+insert into student_course values(3, 2);
+insert into student_course values(4, 3);
+insert into student_course values(5, 4);
+insert into student_course values(6, 5);
+insert into student_course values(7, 5);
+__________________________________________________________________
+
+
+■ STEP006 ex
+과제 2-1.
+학생번호, 학생명, 키높이, 학과번호, 학과명 정보를 출력합니다.
++------------+--------------+--------+---------------+-----------------+
+| student_id | student_name | height | department_id | department_name |
++------------+--------------+--------+---------------+-----------------+
+|          1 | 가길동       |    177 |             1 | 수학            |
+|          2 | 나길동       |    178 |             1 | 수학            |
+|          3 | 다길동       |    179 |             1 | 수학            |
+|          4 | 라길동       |    180 |             2 | 국문학          |
+|          5 | 마길동       |    170 |             2 | 국문학          |
+|          6 | 바길동       |    172 |             3 | 정보통신공학    |
+|          7 | 사길동       |    166 |             4 | 모바일공학      |
+|          8 | 아길동       |    192 |             4 | 모바일공학      |
++------------+--------------+--------+---------------+-----------------+
+8 rows in set (0.02 sec)
+
+ (학생 + 학과 join)
+답 : 
+select s.*, d.department_name 
+from student s join department d 
+on s.department_id= d.department_id ;
+
+or
+
+select s.*, d.department_name 
+from student s , department d 
+where s.department_id= d.department_id ;
+----------------------------------------------------------------------------
+과제 2-2.
+'가교수' 교수의 교수아이디를 출력하세요.
++--------------+
+| professor_id |
++--------------+
+|            1 |
++--------------+
+1 row in set (0.02 sec)
+
+답:
+select professor_id 
+from professor 
+where professor_name = '가교수';
+
+--------------------------------------------------------------------
+과제 2-3.
+학과이름별 교수의 수를 출력하세요.
++-----------------+-----------------------+
+| department_name | count(p.professor_id) |
++-----------------+-----------------------+
+| 국문학          |                     1 |
+| 모바일공학      |                     1 |
+| 수학            |                     1 |
+| 정보통신공학    |                     2 |
++-----------------+-----------------------+
+4 rows in set (0.00 sec)
+
+ 학과와 교수 테이블 (groip by) + join
+ 답:
+
+select department_name , count(p.professor_id)
+from department d, professor p 
+where d.department_id = p.department_id
+group by d.department_name;
+
+or 
+
+select department_name , count(p.professor_id)
+from department d join professor p 
+on d.department_id = p.department_id
+group by d.department_name;
+
+(학과별 group by)
+---------------------------------------------------------------- 
+
+과제 2-4.
+'정보통신공학'과의 학생정보를 출력하세요.
+ +------------+--------------+--------+---------------+-----------------+
+| student_id | student_name | height | department_id | department_name |
++------------+--------------+--------+---------------+-----------------+
+|          6 | 바길동       |    172 |             3 | 정보통신공학    |
++------------+--------------+--------+---------------+-----------------+
+1 row in set (0.00 sec)
+
+(학생 + 학과 join)
+답: 
+ select s.*, d.department_name 
+from student as s join department as d 
+on s.department_id= d.department_id 
+where d.department_name = '정보통신공학' ;
+
+-----------------------------------------------------------------
+과제 2-5.
+'정보통신공학'과의 교수명을 출력하세요.
++--------------+----------------+---------------+-----------------+
+| professor_id | professor_name | department_id | department_name |
++--------------+----------------+---------------+-----------------+
+|            3 | 다교수         |             3 | 정보통신공학    |
+|            5 | 스티브잡스     |             3 | 정보통신공학    |
++--------------+----------------+---------------+-----------------+
+2 rows in set (0.00 sec)
+
+교수 + 학과 join
+답:
+ select p.*, d.department_name 
+from professor as p join department as d 
+on p.department_id= d.department_id 
+where d.department_name = '정보통신공학' ;
+ 
+--------------------------------------------------------------------------
+
+과제 2-6.  
+가장 많은 학생이 있는 학과명을 출력하세요.
++-----------------+
+| department_name |
++-----------------+
+| 수학            |
++-----------------+
+1 row in set (0.00 sec)
+
+답 :
+ 
+select department_name
+from
+where
+
+
+1. 학생숫자카운트  
+2. 가장 많은 학생  
+3. 가장많은 학생숫자 -  학과번호  count(department_id)  
+
+---------------------------------------------------------------------------
+
+과제 2-7.
+학생 중 성이 '아'인 학생이 속한 학과명과 학생명을 출력하세요.
++--------------+-----------------+
+| student_name | department_name |
++--------------+-----------------+
+| 아길동       | 모바일공학      |
++--------------+-----------------+
+1 row in set (0.00 sec)
+
+ (학생 + 학과 join)
+답: 
+ select s.student_name, d.department_name 
+from student as s join department as d 
+on s.department_id= d.department_id 
+where s.student_name like '%아%' ;
+
+ 
+---------------------------------------------------------------------
+과제 2-8.
+키가 180~190사이에 속하는 학생 수를 출력하세요.
++-------------------+
+| count(student_id) |
++-------------------+
+|                 1 |
++-------------------+
+1 row in set (0.00 sec)
+ 
+답 :
+select  count(student_id) 
+from student 
+where height between 180 and 190;
+
+--------------------------------------------------------------
+과제 2-9.
+학과이름별 키의 최고값, 평균값을 출력하세요.
++-----------------+-------------+-------------+
+| department_name | max(height) | avg(height) |
++-----------------+-------------+-------------+
+| 국문학          |         180 |    175.0000 |
+| 모바일공학      |         192 |    179.0000 |
+| 수학            |         179 |    178.0000 |
+| 정보통신공학    |         172 |    172.0000 |
++-----------------+-------------+-------------+
+4 rows in set (0.00 sec)
+
+답 :
+ 학과와 학생 테이블 (groip by) + join
+ 답:
+
+select department_name , max(height) , avg(height) 
+from department d, student s
+where d.department_id = s.department_id
+group by d.department_name;
+
+or 
+
+select department_name , max(height) , avg(height) 
+from department d, student s
+where d.department_id = s.department_id
+group by d.department_name;
+
+(학과별 group by)
+ 
+-------------------------------------------------------------------------------
+
+과제 2-10.
+'다길동' 학생과 같은 학과에 속한 학생의 이름을 출력하세요.
++--------------+
+| student_name |
++--------------+
+| 가길동       |
+| 나길동       |
+| 다길동       |
++--------------+
+3 rows in set (0.00 sec)
+ 
+  (학생 + 학과 join) + 서브쿼리 
+답: 
+
+
+------------------------------------------------------------------------
+
+
+과제 2-11.
+2016년 11월 시작하는 과목을 수강하는 학생의 이름과 수강과목을 출력하세요.
++--------------+--------------------+
+| student_name | course_name        |
++--------------+--------------------+
+| 마길동       | 공업수학           |
+| 바길동       | 객체지향프로그래밍 |
+| 사길동       | 객체지향프로그래밍 |
++--------------+--------------------+
+3 rows in set, 1 warning (0.00 sec)
+ 
+학생 + 개설과목 + 수강 ****************
+
+ select s.student_name, course_name from course, student as s join student_course as c on c.student_id = s.student_id where course_id= (select course_id from course where where start_date >= '2016-11-01');
+
+select course_name from course where start_date >= '2016-11-01';
+
+ 
+
+---------------------------------------------------------------
+과제 2-12.
+'데이터베이스 입문' 과목을 수강신청한 학생의 이름은?
++--------------+
+| student_name |
++--------------+
+| 다길동       |
++--------------+
+1 row in set (0.00 sec)
+
+수강 + 학생 join + 서브쿼리 (수강 + 개설과목)
+
+답:
+ select student_name from student as s join student_course as c on c.student_id = s.student_id where course_id= (select course_id from course where course_name = '데이터베이스 입문');
+ 
+
+------------------------------------------------------------
+
+과제 2-13.
+'빌게이츠' 교수의 과목을 수강신청한 학생수는?
+ +-------------------+
+| count(student_id) |
++-------------------+
+|                 1 |
++-------------------+
+1 row in set (0.00 sec)
+
+서브쿼리 교수 + (개설과목 + 수강 join)
+
+답 :
+select count(student_id) from student_course as s join course as c on 
+s.course_id = c.course_id where c.professor_id = (select professor_id from professor where professor_name = '빌게이츠');
+
+------------------------------------------------------------------------
+
+과제 2-14.
+'사길동' 학생과 같은 과목을 수강신청한 학생이름을 출력하세요.
+ +--------------+
+| student_name |
++--------------+
+| 바길동       |
+| 사길동       |
++--------------+
+2 rows in set (0.01 sec)
+
+
+ 답:
+ select student_name from student as s join student_course as c on c.student_id = s.student_id where course_id= 5;
+
+(select course_id from student where student_name = '사길동');
+
+-----------------------------------------------------------------------------
+
+과제 2-15.
+'사길동' 학생이 수강신청한 과목의 과목명과 시작일자를 출력하세요.
++--------------------+------------+
+| course_name        | start_date |
++--------------------+------------+
+| 객체지향프로그래밍 | 2016-11-01 |
++--------------------+------------+
+1 row in set (0.00 sec)
+ 
+
+
+
+
+과제 2-16.
+'다교수' 교수의 과목 중 2016년 11월 개강하는 과목을 수강 신청한 학생이름을 출력하세요.
++--------------+
+| student_name |
++--------------+
+| 바길동       |
+| 사길동       |
++--------------+
+2 rows in set, 1 warning (0.00 sec)
+ 
+
+
+
+
+과제 2-17.
+개설과목이름별, 수강자수를 출력하세요.
+힌트: 개설과목이름은 course 테이블을 참조하고 수강자수는 student_course 테이블을 참조한다.
+
++--------------------+-----+
+| course_name        | cnt |
++--------------------+-----+
+| 객체지향프로그래밍 |   2 |
+| 공업수학           |   1 |
+| 교양영어           |   2 |
+| 데이터베이스 입문  |   1 |
+| 회로이론           |   1 |
++--------------------+-----+
+5 rows in set (0.00 sec)
+
+ 
+
